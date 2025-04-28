@@ -1,120 +1,65 @@
 let assets = JSON.parse(localStorage.getItem('assets')) || [];
-let netWorth = parseFloat(localStorage.getItem('netWorth')) || 0;
 let netWorthHistory = JSON.parse(localStorage.getItem('netWorthHistory')) || [];
-let chart;
-let networthChart;
+let chart, networthChart;
 
 const apiKey = '96459ccc34b340bb9934727ea0e55979';
 
 updateDisplay();
 
-async function addAsset() {
-  const typeSelect = document.getElementById('asset-type');
-  const assetType = typeSelect.value;
-  const nameInput = document.getElementById('asset-name');
-  const assetName = nameInput.value.trim().toUpperCase();
-  const loading = document.getElementById('loading');
+function switchScreen(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`${screen}-screen`).classList.add('active');
+}
 
-  if (assetName) {
-    try {
-      loading.style.display = 'flex';
+function addAsset() {
+  const type = document.getElementById('asset-type').value;
+  const name = document.getElementById('asset-name').value.trim();
+  const value = parseFloat(document.getElementById('asset-value').value);
 
-      let assetValue = 0;
-      if (assetType === 'Stock' || assetType === 'Crypto') {
-        const response = await fetch(`https://api.twelvedata.com/price?symbol=${assetName}&apikey=${apiKey}`);
-        const data = await response.json();
-        if (data.price) {
-          assetValue = parseFloat(data.price);
-        } else {
-          alert("Couldn't fetch price. Check the symbol!");
-          return;
-        }
-      } else {
-        assetValue = parseFloat(prompt("Enter the value in dollars:"));
-      }
-
-      if (!isNaN(assetValue)) {
-        assets.push({ type: assetType, name: assetName, value: assetValue });
-        netWorth += assetValue;
-
-        netWorthHistory.push({
-          date: new Date().toLocaleString(),
-          value: netWorth
-        });
-
-        saveData();
-        updateDisplay();
-        nameInput.value = '';
-      } else {
-        alert("Invalid value entered.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error fetching asset price!");
-    } finally {
-      loading.style.display = 'none';
-    }
+  if (name && !isNaN(value)) {
+    assets.push({ type, name, value });
+    saveData();
+    updateDisplay();
+    document.getElementById('asset-name').value = '';
+    document.getElementById('asset-value').value = '';
   } else {
-    alert("Please enter an asset name!");
+    alert('Please fill out all fields.');
   }
 }
 
-function importCSV() {
-  const fileInput = document.getElementById('csv-file');
-  const file = fileInput.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    const lines = text.split('\n');
-    assets = [];
-    netWorth = 0;
-    netWorthHistory = [];
-
-    for (let line of lines) {
-      const [type, name, value] = line.split(',');
-      if (type && name && value) {
-        assets.push({
-          type: type.trim(),
-          name: name.trim(),
-          value: parseFloat(value.trim())
-        });
-        netWorth += parseFloat(value.trim());
-      }
-    }
-
-    netWorthHistory.push({
-      date: new Date().toLocaleString(),
-      value: netWorth
-    });
-
-    saveData();
-    updateDisplay();
-  };
-
-  reader.readAsText(file);
+function updateDisplay() {
+  updateAssetsList();
+  updateCharts();
 }
 
-function updateDisplay() {
+function updateAssetsList() {
   const assetsList = document.getElementById('assets-list');
-  const networthDisplay = document.getElementById('networth');
-
-  networthDisplay.textContent = `$${netWorth.toFixed(2)}`;
   assetsList.innerHTML = '';
 
-  assets.forEach((asset, index) => {
-    const li = document.createElement('li');
-    li.textContent = `[${asset.type}] ${asset.name}: $${asset.value.toFixed(2)}`;
-    assetsList.appendChild(li);
-  });
+  const groups = assets.reduce((acc, asset) => {
+    if (!acc[asset.type]) acc[asset.type] = [];
+    acc[asset.type].push(asset);
+    return acc;
+  }, {});
 
-  updateCharts();
+  for (const type in groups) {
+    const section = document.createElement('div');
+    section.innerHTML = `<h3>${type}</h3>`;
+    const ul = document.createElement('ul');
+    groups[type].forEach(asset => {
+      const li = document.createElement('li');
+      li.textContent = `${asset.name}: $${asset.value.toFixed(2)}`;
+      ul.appendChild(li);
+    });
+    section.appendChild(ul);
+    assetsList.appendChild(section);
+  }
 }
 
 function saveData() {
   localStorage.setItem('assets', JSON.stringify(assets));
-  localStorage.setItem('netWorth', netWorth.toString());
+  const totalNetWorth = assets.reduce((sum, a) => sum + a.value, 0);
+  netWorthHistory.push({ date: new Date().toLocaleString(), value: totalNetWorth });
   localStorage.setItem('netWorthHistory', JSON.stringify(netWorthHistory));
 }
 
@@ -122,8 +67,8 @@ function updateCharts() {
   const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
   const networthCtx = document.getElementById('networthChart').getContext('2d');
 
-  const labels = assets.map(asset => `${asset.type}-${asset.name}`);
-  const values = assets.map(asset => asset.value);
+  const labels = assets.map(a => `${a.type}: ${a.name}`);
+  const values = assets.map(a => a.value);
 
   if (chart) chart.destroy();
   if (networthChart) networthChart.destroy();
@@ -131,42 +76,21 @@ function updateCharts() {
   chart = new Chart(portfolioCtx, {
     type: 'pie',
     data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: ['#00f5d4', '#f72585', '#7209b7', '#3a0ca3', '#4361ee', '#4cc9f0'],
-        borderColor: 'white',
-        borderWidth: 2
-      }]
-    },
-    options: {
-      plugins: {
-        legend: { labels: { color: '#00f5d4' } }
-      }
+      labels,
+      datasets: [{ data: values }]
     }
   });
 
   networthChart = new Chart(networthCtx, {
     type: 'line',
     data: {
-      labels: netWorthHistory.map(entry => entry.date),
+      labels: netWorthHistory.map(n => n.date),
       datasets: [{
         label: 'Net Worth',
-        data: netWorthHistory.map(entry => entry.value),
-        borderColor: '#00f5d4',
-        backgroundColor: 'rgba(0,245,212,0.2)',
-        pointBackgroundColor: '#f72585',
-        borderWidth: 2
+        data: netWorthHistory.map(n => n.value),
+        fill: true
       }]
-    },
-    options: {
-      plugins: {
-        legend: { labels: { color: '#00f5d4' } }
-      },
-      scales: {
-        x: { ticks: { color: '#fff' } },
-        y: { ticks: { color: '#fff' } }
-      }
     }
   });
 }
+
