@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PortfolioPulse</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+
+  <h1>PortfolioPulse 💸</h1>
+
+  <div class="grid-layout">
+    <div class="panel glass">
+      <h2>Net Worth</h2>
+      <p id="networth">$0</p>
+    </div>
+
+    <div class="panel glass">
+      <h2>Add Asset</h2>
+      <select id="asset-type">
+        <option value="Stock">Stock</option>
+        <option value="Crypto">Crypto</option>
+        <option value="Cash">Cash</option>
+        <option value="Real Estate">Real Estate</option>
+      </select>
+      <input type="text" id="asset-name" placeholder="Enter Symbol/Name">
+      <button onclick="addAsset()">Add Asset</button>
+      <input type="file" id="csv-file" accept=".csv" onchange="importCSV()">
+    </div>
+  </div>
+
+  <div class="grid-layout">
+    <div class="panel glass">
+      <h2>Assets 📈</h2>
+      <ul id="assets-list"></ul>
+    </div>
+
+    <div class="panel glass">
+      <h2>Portfolio Chart</h2>
+      <canvas id="portfolioChart"></canvas>
+    </div>
+  </div>
+
+  <div class="panel glass">
+    <h2>Net Worth Over Time</h2>
+    <canvas id="networthChart"></canvas>
+  </div>
+
+</div>
+
+<div id="loading" style="display: none;">
+  <div class="loading-popup">
+    <p>Loading...</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+
+</body>
+</html>
