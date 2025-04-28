@@ -6,57 +6,51 @@
   <title>PortfolioPulse</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
 
-  <h1>PortfolioPulse 💸</h1>
+  <header class="header">
+    <h1>PortfolioPulse 💸</h1>
+  </header>
 
-  <div class="grid-layout">
-    <div class="panel glass">
-      <h2>Net Worth</h2>
-      <p id="networth">$0</p>
-    </div>
+  <main id="main-content">
+    <!-- Screens -->
+    <section id="portfolio-screen" class="screen active">
+      <h2>Portfolio Overview</h2>
+      <canvas id="portfolioChart"></canvas>
+      <canvas id="networthChart"></canvas>
+    </section>
 
-    <div class="panel glass">
+    <section id="assets-screen" class="screen">
+      <h2>Assets</h2>
+      <div id="assets-list"></div>
+    </section>
+
+    <section id="add-screen" class="screen">
       <h2>Add Asset</h2>
       <select id="asset-type">
         <option value="Stock">Stock</option>
         <option value="Crypto">Crypto</option>
         <option value="Cash">Cash</option>
         <option value="Real Estate">Real Estate</option>
+        <option value="Comic">Comic Book</option>
       </select>
-      <input type="text" id="asset-name" placeholder="Enter Symbol/Name">
+      <input type="text" id="asset-name" placeholder="Enter Name/Symbol">
+      <input type="number" id="asset-value" placeholder="Enter Value ($)">
       <button onclick="addAsset()">Add Asset</button>
       <input type="file" id="csv-file" accept=".csv" onchange="importCSV()">
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <div class="grid-layout">
-    <div class="panel glass">
-      <h2>Assets 📈</h2>
-      <ul id="assets-list"></ul>
-    </div>
+  <nav class="bottom-nav">
+    <button onclick="switchScreen('portfolio')">🏠 Portfolio</button>
+    <button onclick="switchScreen('assets')">📂 Assets</button>
+    <button onclick="switchScreen('add')">➕ Add</button>
+  </nav>
 
-    <div class="panel glass">
-      <h2>Portfolio Chart</h2>
-      <canvas id="portfolioChart"></canvas>
-    </div>
-  </div>
-
-  <div class="panel glass">
-    <h2>Net Worth Over Time</h2>
-    <canvas id="networthChart"></canvas>
-  </div>
-
-</div>
-
-<div id="loading" style="display: none;">
-  <div class="loading-popup">
-    <p>Loading...</p>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
