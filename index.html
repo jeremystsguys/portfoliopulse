@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PortfolioPulse</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app-container">
+
+  <header class="header">
+    <h1>PortfolioPulse 💸</h1>
+  </header>
+
+  <main id="main-content">
+    <!-- Screens -->
+    <section id="home-screen" class="screen active">
+      <h2>Net Worth Overview</h2>
+      <div class="net-worth-display" id="net-worth">$0</div>
+      <canvas id="pieChart"></canvas>
+      <canvas id="networthChart"></canvas>
+      <button onclick="generateShareImage()">📸 Share Progress</button>
+    </section>
+
+    <section id="investments-screen" class="screen">
+      <h2>Investments</h2>
+      <div id="investments-list"></div>
+    </section>
+
+    <section id="assets-screen" class="screen">
+      <h2>Alternative Assets</h2>
+      <div id="assets-list"></div>
+    </section>
+
+    <section id="add-screen" class="screen">
+      <h2>Add New Asset or Debt</h2>
+      <select id="asset-type">
+        <option value="Cash">Cash</option>
+        <option value="Stock">Stock</option>
+        <option value="Crypto">Crypto</option>
+        <option value="Real Estate">Real Estate</option>
+        <option value="Comic">Comic Book</option>
+        <option value="Purse">Purse</option>
+        <option value="Watch">Watch</option>
+        <option value="Jewelry">Jewelry</option>
+        <option value="Custom Asset">Custom Asset</option>
+        <option value="Debt">Debt</option>
+        <option value="Custom Debt">Custom Debt</option>
+      </select>
+      <input type="text" id="asset-name" placeholder="Enter Name">
+      <input type="number" id="asset-value" placeholder="Enter Value ($)">
+      <button onclick="addAsset()">➕ Add</button>
+    </section>
+
+    <section id="settings-screen" class="screen">
+      <h2>Settings</h2>
+      <button onclick="exportAssets()">📤 Export Data (CSV)</button>
+      <button onclick="resetApp()">🗑️ Reset App</button>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button onclick="switchScreen('home')">🏠 Home</button>
+    <button onclick="switchScreen('investments')">💵 Investments</button>
+    <button onclick="switchScreen('assets')">💎 Alt Assets</button>
+    <button onclick="switchScreen('add')">➕ Add</button>
+    <button onclick="switchScreen('settings')">⚙️ Settings</button>
+  </nav>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#00d2ff">
+  <!-- Outer Circle -->
+  <circle cx="50" cy="50" r="30" fill="none" stroke="#00d2ff" stroke-width="10"></circle>
+
+  <!-- Center Hole -->
+  <circle cx="50" cy="50" r="10" fill="none" stroke="#00d2ff" stroke-width="10"></circle>
+
+  <!-- Teeth (8 square blocks) -->
+  <rect x="50" y="0" width="10" height="20" transform="rotate(0 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(45 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(90 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(135 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(180 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(225 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(270 50 50)" fill="#00d2ff"></rect>
+  <rect x="50" y="0" width="10" height="20" transform="rotate(315 50 50)" fill="#00d2ff"></rect>
+</svg>
